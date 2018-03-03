@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Symulacja</title>
+    <style>
+        textarea {
+            height: 396px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="300" height="400" style="border:1px solid #d3d3d3;"></canvas>
+<textarea id="input" placeholder="Commands available:
+FWx - Move forward X tiles
+BWx - Move backward x tiles
+Rxx - Turn right x degrees
+Lxx - Turn left x degrees
+FORx ... ENDFOR - Repeat code inside for x times
+
+Triangle for example:
+FOR3
+FW35
+R120
+ENDFOR"></textarea>
+<div id="output"></div>
+
+<script src="Vector.js"></script>
+<script src="parser.js"></script>
+<script src="draw.js" defer></script>
+</body>
+</html>

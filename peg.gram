@@ -1,0 +1,101 @@
+{
+  Math.radians = function(degrees) {
+	return degrees * Math.PI / 180;
+  };
+  function makeInteger(o) {
+    return parseInt(o.join(""), 10);
+  }
+  var canvas = document.getElementById("canvas");
+
+  var block_size = 1;
+  var deg = 0;
+  var pos = new Vector(canvas.width/2, canvas.height/2);
+
+  var ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.moveTo(pos.x, pos.y);
+}
+
+start =
+  Exec
+
+Exec =
+ exp:Expression* {
+ if (exp instanceof Array) {
+    for(var i=0; i<exp.length; i++) {
+      exp[i]();
+    }
+ }
+ ctx.stroke();
+ return pos.toString() + ' deg:' + deg;
+}
+Expression
+  = Comment
+  / ForLoop
+  / Move
+  / Turn
+
+ForLoop
+ = _ "FOR" loopnum:Integer _ exp:Expression* _ "ENDFOR" _ {
+ 	if (exp instanceof Function) {
+ 		return function() {
+        	for(var i=0; i<loopnum; i++) {
+         		exp();
+            }
+        };
+      }
+    if (exp instanceof Array){
+        return function() {
+        	for(var i=0; i<loopnum; i++) {
+            	for(var j=0;j<exp.length;j++){
+                	exp[j]();
+                }
+            }
+        };
+    }
+    return undefined;
+}
+
+Move
+ =  _ "FW" steps:Integer  _ {
+  return function(){
+    var move = new Vector(steps * block_size, 0);
+    move.setDirection(Math.radians(deg));
+    pos.addTo(move);
+	ctx.lineTo(pos.x, pos.y);
+  };
+}
+ / _ "BW" steps:Integer _ {
+  return function(){
+  	parseInt(steps);
+    var move = new Vector(steps + block_size, 0);
+    move.setDirection(Math.radians(deg));
+    pos.subtractFrom(move);
+	ctx.lineTo(pos.x, pos.y);
+  }
+}
+Turn
+ = _ "R" degrees:Integer _ {
+  	  return function() {
+      	deg += degrees;
+        deg %= 360;
+      }
+ }
+ / _ "L" degrees:Integer _ {
+  	  return function() {
+         deg -= degrees;
+         deg %= 360;
+      }
+ }
+
+Integer "integer"
+  = _ [0-9]+ { return parseInt(text(), 10); }
+
+_ "whitespace"
+  = [ \t\n\r]*
+
+Comment
+  = _ "//" ([a-zA-Z0-9 \t])* "\n" {
+  return function(){};
+  }
